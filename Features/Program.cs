@@ -22,13 +22,26 @@ namespace Features
                 new Employee { Id = 3, Name = "Ales" },
                 new Employee { Id = 4, Name = "Olek" }
             };
-            Console.WriteLine(developers.Count());
+            /*Console.WriteLine(developers.Count());
             IEnumerator<Employee> enumerator = sales.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 Console.WriteLine(enumerator.Current.Name);
                 Console.ReadKey();
             }
+            */
+            foreach (var employee in developers.Where(
+                     e=>e.Name.StartsWith("S")
+                     ))
+            {
+                Console.WriteLine(employee.Name);
+                Console.ReadKey();
+            }
         }
+
+        /*private static bool NameStartWithS(Employee employee)
+        {
+            return employee.Name.StartsWith("S");
+        }*/
     }
 }
