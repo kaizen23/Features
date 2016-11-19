@@ -35,9 +35,10 @@ namespace Features
                 Console.ReadKey();
             }
             */
-            foreach (var employee in developers.Where(
-                     e=>e.Name.StartsWith("S")
-                     ))
+            foreach (var employee in developers.Where(e=>e.Name.StartsWith("S"))
+                                               .Where(e=> e.Name.Length >= 4)
+                                               .OrderBy(e => e.Name)
+                    )
             {
                 Console.WriteLine(employee.Name);
                 Console.ReadKey();
