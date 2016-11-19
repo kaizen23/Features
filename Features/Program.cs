@@ -11,6 +11,11 @@ namespace Features
     {
         static void Main(string[] args)
         {
+            Func<int, int> square = x => x * x;
+            Func<int,int,int> add = (x,y) => x + y;
+            Action<int> write = x => Console.WriteLine(x);
+            write(add(2, 2));
+            Console.WriteLine(add((square(5)),(square(4))));
             IEnumerable<Employee> developers = new Employee[]
             {
                 new Employee {Id =1, Name = "Scott" },
