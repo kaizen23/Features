@@ -18,15 +18,19 @@ namespace Queries
                 new Movie { Title = "Start Wars V", Rating = 8.3f, Year = 2004 }
             };
 
-            var query = movies.Filter(m => m.Year > 2000);
-            
+            var query = movies.Filter(m => m.Year > 2000).Take(1);
 
-            foreach (var movie in query)
+            IEnumerator<Movie> enumerator = query.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-            Console.WriteLine(movie.Title);
+                Console.WriteLine(enumerator.Current.Title);
             }
+            //foreach (var movie in query)
+            //{
+            //    Console.WriteLine(movie.Title);
+            //}
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }
