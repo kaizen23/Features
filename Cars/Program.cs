@@ -16,25 +16,29 @@ namespace Cars
                             .Where(c => c.Year == 2016)
                             .OrderByDescending(c => c.Combined)
                             .ThenBy(c => c.Name)
+                            .Select(c => new { c.Manufacture, c.Name, c.Combined})
                             .Take(10);
             var result = cars.Any(c => c.Manufacture == "Ford");
-            Console.WriteLine(result);
+            //Console.WriteLine(result);
 
-            //foreach(var car in query)
-            //{
-            //    Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
-            //}
+            foreach (var car in query)
+            {
+                Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
+            }
             Console.ReadKey();
         }
 
         private static List<Car> ProcessFile(string path)
         {
-            return
+            var query =
+
                 File.ReadAllLines(path)
                     .Skip(1)
                     .Where(line => line.Length > 1)
+                   // .ToCar()
                     .Select(Car.ParseFromCsv)
                     .ToList();
+            return query;
 
 
         }
