@@ -19,12 +19,17 @@ namespace Cars
                             .Select(c => new { c.Manufacture, c.Name, c.Combined})
                             .Take(10);
             var result = cars.Any(c => c.Manufacture == "Ford");
+            var result2 = cars.SelectMany(c => c.Name);
+            foreach (var character in result2)
+            {
+                Console.WriteLine(character);
+            }
             //Console.WriteLine(result);
 
-            foreach (var car in query)
-            {
-                Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
-            }
+            //foreach (var car in query)
+            //{
+            //    Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
+            //}
             Console.ReadKey();
         }
 
