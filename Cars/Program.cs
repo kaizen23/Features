@@ -50,12 +50,14 @@ namespace Cars
                                                     Cars = g
                                                 }
                                             )
-                                .OrderBy(m => m.Manufacturer.Name);
-
+                                //.OrderBy(m => m.Manufacturer.Name);
+                                .GroupBy(m => m.Manufacturer.Headquarters);
             foreach ( var result in groupjoin)
             {
-                Console.WriteLine($"{result.Manufacturer.Name} in {result.Manufacturer.Headquarters}");
-                foreach(var car in result.Cars.OrderByDescending(c => c.Combined).Take(2))
+                Console.WriteLine($"{result.Key}");
+                foreach(var car in result.SelectMany(g =>g.Cars)
+                                         .OrderByDescending(c => c.Combined)
+                                         .Take(2))
                {
                     Console.WriteLine($"\t{car.Name} : {car.Combined}" );
                 }
