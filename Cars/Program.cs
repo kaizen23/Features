@@ -12,6 +12,7 @@ namespace Cars
         static void Main(string[] args)
         {
             var cars = ProcessFile("fuel.csv");
+            var manufactures = ProcessManufacturers("manufacturers.csv");
             var query = cars.Where(c => c.Manufacture =="BMW")
                             .Where(c => c.Year == 2016)
                             .OrderByDescending(c => c.Combined)
@@ -19,18 +20,38 @@ namespace Cars
                             .Select(c => new { c.Manufacture, c.Name, c.Combined})
                             .Take(10);
             var result = cars.Any(c => c.Manufacture == "Ford");
-            var result2 = cars.SelectMany(c => c.Name);
-            foreach (var character in result2)
-            {
-                Console.WriteLine(character);
-            }
+            //var result2 = cars.SelectMany(c => c.Name);
+            //foreach (var character in result2)
+            //{
+            //    Console.WriteLine(character);
+            //}
             //Console.WriteLine(result);
 
-            //foreach (var car in query)
-            //{
-            //    Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
-            //}
+            foreach (var car in query)
+            {
+                Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
+            }
             Console.ReadKey();
+        }
+
+        private static List<Manufacturer> ProcessManufacturers(string path)
+        {
+            var query =
+
+                File.ReadAllLines(path)
+                    .Skip(1)
+                    .Where(line => line.Length > 1)
+                    .Select(line =>
+                    {
+                        var columns = line.Split(',');
+                        return new Manufacturer
+                        {
+                            Name = columns[0],
+                            Headquarters = columns[1],
+                            Year = int.Parse(columns[2])
+                        };
+                    });
+            return query.ToList();
         }
 
         private static List<Car> ProcessFile(string path)
@@ -41,7 +62,7 @@ namespace Cars
                     .Skip(1)
                     .Where(line => line.Length > 1)
                     .ToCar()
-                    .Select(Car.ParseFromCsv)
+                    //.Select(Car.ParseFromCsv)
                     .ToList();
             return query;
 
