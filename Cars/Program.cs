@@ -40,7 +40,7 @@ namespace Cars
                 File.ReadAllLines(path)
                     .Skip(1)
                     .Where(line => line.Length > 1)
-                   // .ToCar()
+                    .ToCar()
                     .Select(Car.ParseFromCsv)
                     .ToList();
             return query;
