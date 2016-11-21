@@ -26,7 +26,7 @@ namespace Cars
                             .ThenBy(c => c.Name)
                             .Select(c => new {c.Headquarters, c.Name, c.Combined})
                             .Take(10);
-            var result = cars.Any(c => c.Manufacturer == "Ford");
+            //var result = cars.Any(c => c.Manufacturer == "Ford");
             //var result2 = cars.SelectMany(c => c.Name);
             //foreach (var character in result2)
             //{
@@ -34,10 +34,24 @@ namespace Cars
             //}
             //Console.WriteLine(result);
 
-            foreach (var car in query)
+            var group =
+                    cars//.Where(c => c.Manufacturer.Equals("MASERATI"))
+                        .GroupBy(c => c.Manufacturer.ToUpper())
+                        .OrderBy(g => g.Key);
+
+            foreach ( var result in group)
             {
-                Console.WriteLine($"{car.Headquarters} {car.Name} : {car.Combined}");
+                Console.WriteLine($"{result.Key} has {result.Count()}");
+                foreach(var car in result.OrderByDescending(c => c.Combined).Take(2))
+               {
+                    Console.WriteLine($"\t{car.Name} : {car.Combined}" );
+                }
             }
+
+            //foreach (var car in query)
+            //{
+            //    Console.WriteLine($"{car.Headquarters} {car.Name} : {car.Combined}");
+            //}
             Console.ReadKey();
         }
 
