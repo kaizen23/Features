@@ -13,11 +13,18 @@ namespace Cars
         {
             var cars = ProcessFile("fuel.csv");
             var manufactures = ProcessManufacturers("manufacturers.csv");
-            var query = cars.Where(c => c.Manufacture =="BMW")
-                            .Where(c => c.Year == 2016)
+            var query = cars.Join(manufactures,
+                             c => c.Manufacture,
+                             m => m.Name,
+                             (c, m) => new
+                             {
+                                 c.Name,
+                                 m.Headquarters,
+                                 c.Combined
+                             })
                             .OrderByDescending(c => c.Combined)
                             .ThenBy(c => c.Name)
-                            .Select(c => new { c.Manufacture, c.Name, c.Combined})
+                            .Select(c => new {c.Headquarters, c.Name, c.Combined})
                             .Take(10);
             var result = cars.Any(c => c.Manufacture == "Ford");
             //var result2 = cars.SelectMany(c => c.Name);
@@ -29,7 +36,7 @@ namespace Cars
 
             foreach (var car in query)
             {
-                Console.WriteLine($"{car.Manufacture} {car.Name} : {car.Combined}");
+                Console.WriteLine($"{car.Headquarters} {car.Name} : {car.Combined}");
             }
             Console.ReadKey();
         }
