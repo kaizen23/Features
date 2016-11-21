@@ -39,10 +39,23 @@ namespace Cars
                         .GroupBy(c => c.Manufacturer.ToUpper())
                         .OrderBy(g => g.Key);
 
-            foreach ( var result in group)
+            var groupjoin =
+                    manufacturers.GroupJoin(cars,
+                                            m => m.Name,
+                                            c => c.Manufacturer,
+                                            (m, g) =>
+                                                new
+                                                {
+                                                    Manufacturer = m,
+                                                    Cars = g
+                                                }
+                                            )
+                                .OrderBy(m => m.Manufacturer.Name);
+
+            foreach ( var result in groupjoin)
             {
-                Console.WriteLine($"{result.Key} has {result.Count()}");
-                foreach(var car in result.OrderByDescending(c => c.Combined).Take(2))
+                Console.WriteLine($"{result.Manufacturer.Name} in {result.Manufacturer.Headquarters}");
+                foreach(var car in result.Cars.OrderByDescending(c => c.Combined).Take(2))
                {
                     Console.WriteLine($"\t{car.Name} : {car.Combined}" );
                 }
