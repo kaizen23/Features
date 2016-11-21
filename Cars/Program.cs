@@ -12,10 +12,10 @@ namespace Cars
         static void Main(string[] args)
         {
             var cars = ProcessFile("fuel.csv");
-            var manufactures = ProcessManufacturers("manufacturers.csv");
-            var query = cars.Join(manufactures,
-                             c => c.Manufacture,
-                             m => m.Name,
+            var manufacturers = ProcessManufacturers("manufacturers.csv");
+            var query = cars.Join(manufacturers,
+                             c => new { c.Manufacturer, c.Year },
+                             m => new { Manufacturer = m.Name, m.Year },
                              (c, m) => new
                              {
                                  c.Name,
@@ -26,7 +26,7 @@ namespace Cars
                             .ThenBy(c => c.Name)
                             .Select(c => new {c.Headquarters, c.Name, c.Combined})
                             .Take(10);
-            var result = cars.Any(c => c.Manufacture == "Ford");
+            var result = cars.Any(c => c.Manufacturer == "Ford");
             //var result2 = cars.SelectMany(c => c.Name);
             //foreach (var character in result2)
             //{
