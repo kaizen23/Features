@@ -11,7 +11,7 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var records = ProcessFile("fuel.csv");
+            var records23 = ProcessFile("fuel.csv");
             var manufacturers = ProcessManufacturers("manufacturers.csv");
             var query = cars.Join(manufacturers,
                              c => new { c.Manufacturer, c.Year },
