@@ -12,16 +12,7 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var records = ProcessFile("fuel.csv");
-            var document = new XDocument();
-            var cars = new XElement("Cars",
-                from record in records
-                select new XElement("Car",
-                                 new XAttribute("Name", record.Name),
-                                 new XAttribute("Combined", record.Combined)
-                                    )
-
-            );
+            CreateXml();
             //foreach (var  record in records)
             //{
             //    // name = new XAttribute("Combined", record.Combined)
@@ -32,21 +23,32 @@ namespace Cars
             //                             new XAttribute("Combined", record.Combined));
 
 
-                //car.Add(name);
-                //car.Add(combined);
-               // cars.Add(car);
+            //car.Add(name);
+            //car.Add(combined);
+            // cars.Add(car);
 
-            
 
+
+
+        }
+
+        private static void CreateXml()
+        {
+            var records = ProcessFile("fuel.csv");
+            var document = new XDocument();
+            var cars = new XElement("Cars",
+                from record in records
+                select new XElement("Car",
+                                 new XAttribute("Name", record.Name),
+                                 new XAttribute("Combined", record.Combined)
+                                    )
+
+            );
             document.Add(cars);
             document.Save("fuel.xml");
             Console.ReadKey();
-
-         
-            
         }
 
-     
 
         private static List<Car> ProcessFile(string path)
         {
