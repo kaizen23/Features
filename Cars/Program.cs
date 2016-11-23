@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Cars
 {
@@ -12,6 +13,7 @@ namespace Cars
     {
         static void Main(string[] args)
         {
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
             InsertData();
             QueryData();
             //CreateXml();
@@ -37,65 +39,74 @@ namespace Cars
 
         private static void QueryData()
         {
-            throw new NotImplementedException();
+            
         }
 
         private static void InsertData()
         {
-            var Cars = ProcessCars("fuel.csv");
+            var cars = ProcessCars("fuel.csv");
             var db = new CarDb();
-        }
 
-        private static void QueryXml()
-        {
-            var document = XDocument.Load("fuel.xml");
-
-
-            var query =
-                //from element in document.Element("Cars").Elements("Car")
-                from element in document.Descendants("Car")
-                where element.Attribute("Manufacturer").Value == "BMW"
-                select element.Attribute("Name").Value;
-
-            foreach(var name in query)
+            if (!db.Cars.Any())
             {
-                Console.WriteLine(name);
-                
+                foreach(var car in cars)
+                {
+                    db.Cars.Add(car);
+                }
+                db.SaveChanges();
             }
-            Console.ReadKey();
-
         }
 
-        private static void CreateXml()
-        {
-            var records = ProcessFile("fuel.csv");
-            var document = new XDocument();
-            var cars = new XElement("Cars",
-                from record in records
-                select new XElement("Car",
-                                 new XAttribute("Name", record.Name),
-                                 new XAttribute("Manufacturer", record.Manufacturer),
-                                 new XAttribute("Combined", record.Combined)
-                                    )
+        //private static void QueryXml()
+        //{
+        //    var document = XDocument.Load("fuel.xml");
 
-            );
-            document.Add(cars);
-            document.Save("fuel.xml");
+
+        //    var query =
+        //        //from element in document.Element("Cars").Elements("Car")
+        //        from element in document.Descendants("Car")
+        //        where element.Attribute("Manufacturer").Value == "BMW"
+        //        select element.Attribute("Name").Value;
+
+        //    foreach(var name in query)
+        //    {
+        //        Console.WriteLine(name);
+                
+        //    }
+        //    Console.ReadKey();
+
+        //}
+
+        //private static void CreateXml()
+        //{
+        //    var records = ProcessFile("fuel.csv");
+        //    var document = new XDocument();
+        //    var cars = new XElement("Cars",
+        //        from record in records
+        //        select new XElement("Car",
+        //                         new XAttribute("Name", record.Name),
+        //                         new XAttribute("Manufacturer", record.Manufacturer),
+        //                         new XAttribute("Combined", record.Combined)
+        //                            )
+
+        //    );
+        //    document.Add(cars);
+        //    document.Save("fuel.xml");
             
-        }
+        //}
 
 
-        private static List<Car> ProcessFile(string path)
+        private static List<Car> ProcessCars(string path)
         {
             var query =
 
                 File.ReadAllLines(path)
                     .Skip(1)
                     .Where(line => line.Length > 1)
-                    .ToCar()
+                    .ToCar();
                     //.Select(Car.ParseFromCsv)
-                    .ToList();
-            return query;
+
+            return query.ToList();
 
 
         }
