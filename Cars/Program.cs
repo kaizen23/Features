@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Linq.Expressions;
 
 namespace Cars
 {
@@ -13,10 +14,19 @@ namespace Cars
     {
         static void Main(string[] args)
         {
+            //this is like entity framework it work
+            Func<int, int> square = x => x * x;
+            Expression<Func<int, int, int>> add = (x, y) => x + y;
+            Func<int, int, int> addI = add.Compile();
+
+            var result = addI(3, 5);
+            //Console.WriteLine(result);
+            //Console.WriteLine(add);
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
-            InsertData();
+            //InsertData();
             QueryData();
             Console.ReadKey();
+            //Console.ReadKey();
             //CreateXml();
             //QueryXml();
             //foreach (var  record in records)
@@ -47,14 +57,19 @@ namespace Cars
                         select car;
             var query2 =
                     db.Cars
-                    .Where(c => c.Manufacturer =="BMW")
+                    .Where(c => c.Manufacturer == "BMW")
                     .OrderByDescending(c => c.Combined)
-                    .ThenBy(c => c.Name);
-            foreach ( var car in query2.Take(10))
+                    .ThenBy(c => c.Name)
+                    .Take(10);
+                    //.ToList();
+            //.Select( c => new { Name = c.Name.ToUpper(), c.Manufacturer,c.Combined})
+            //.ToList();
+            Console.WriteLine(query2.Count());
+            foreach (var car in query2)
             {
                 Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
             }
-            
+
         }
 
         private static void InsertData()
