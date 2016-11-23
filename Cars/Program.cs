@@ -12,8 +12,10 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            CreateXml();
-            QueryXml();
+            InsertData();
+            QueryData();
+            //CreateXml();
+            //QueryXml();
             //foreach (var  record in records)
             //{
             //    // name = new XAttribute("Combined", record.Combined)
@@ -31,6 +33,17 @@ namespace Cars
 
 
 
+        }
+
+        private static void QueryData()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void InsertData()
+        {
+            var Cars = ProcessCars("fuel.csv");
+            var db = new CarDb();
         }
 
         private static void QueryXml()
