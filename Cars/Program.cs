@@ -16,6 +16,7 @@ namespace Cars
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
             InsertData();
             QueryData();
+            Console.ReadKey();
             //CreateXml();
             //QueryXml();
             //foreach (var  record in records)
@@ -39,6 +40,20 @@ namespace Cars
 
         private static void QueryData()
         {
+            var db = new CarDb();
+            db.Database.Log = Console.WriteLine;
+            var query = from car in db.Cars
+                        orderby car.Combined descending, car.Name ascending
+                        select car;
+            var query2 =
+                    db.Cars
+                    .Where(c => c.Manufacturer =="BMW")
+                    .OrderByDescending(c => c.Combined)
+                    .ThenBy(c => c.Name);
+            foreach ( var car in query2.Take(10))
+            {
+                Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
+            }
             
         }
 
@@ -103,8 +118,8 @@ namespace Cars
                 File.ReadAllLines(path)
                     .Skip(1)
                     .Where(line => line.Length > 1)
-                    .ToCar();
-                    //.Select(Car.ParseFromCsv)
+                    //.ToCar();
+                    .Select(Car.ParseFromCsv);
 
             return query.ToList();
 
