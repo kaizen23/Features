@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,84 +12,65 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var records = ProcessFile("fuel.csv");
-            var manufacturers = ProcessManufacturers("manufacturers.csv");
-            var query = cars.Join(manufacturers,
-                             c => new { c.Manufacturer, c.Year },
-                             m => new { Manufacturer = m.Name, m.Year },
-                             (c, m) => new
-                             {
-                                 c.Name,
-                                 m.Headquarters,
-                                 c.Combined
-                             })
-                            .OrderByDescending(c => c.Combined)
-                            .ThenBy(c => c.Name)
-                            .Select(c => new {c.Headquarters, c.Name, c.Combined})
-                            .Take(10);
-            //var result = cars.Any(c => c.Manufacturer == "Ford");
-            //var result2 = cars.SelectMany(c => c.Name);
-            //foreach (var character in result2)
+            CreateXml();
+            QueryXml();
+            //foreach (var  record in records)
             //{
-            //    Console.WriteLine(character);
-            //}
-            //Console.WriteLine(result);
+            //    // name = new XAttribute("Combined", record.Combined)
+            //    //var combined = new XAttribute("Combined", record.Combined);
+            //    var car = new XElement("Car",
+            //                             new XAttribute("Name", record.Name),
+            //                             new XAttribute("Manufacturer", record.Manufacturer),
+            //                             new XAttribute("Combined", record.Combined));
 
-            var group =
-                    cars//.Where(c => c.Manufacturer.Equals("MASERATI"))
-                        .GroupBy(c => c.Manufacturer.ToUpper())
-                        .OrderBy(g => g.Key);
 
-            var groupjoin =
-                    manufacturers.GroupJoin(cars,
-                                            m => m.Name,
-                                            c => c.Manufacturer,
-                                            (m, g) =>
-                                                new
-                                                {
-                                                    Manufacturer = m,
-                                                    Cars = g
-                                                }
-                                            )
-                                //.OrderBy(m => m.Manufacturer.Name);
-                                .GroupBy(m => m.Manufacturer.Headquarters);
-            foreach ( var result in groupjoin)
-            {
-                Console.WriteLine($"{result.Key}");
-                foreach(var car in result.SelectMany(g =>g.Cars)
-                                         .OrderByDescending(c => c.Combined)
-                                         .Take(2))
-               {
-                    Console.WriteLine($"\t{car.Name} : {car.Combined}" );
-                }
-            }
+            //car.Add(name);
+            //car.Add(combined);
+            // cars.Add(car);
 
-            //foreach (var car in query)
-            //{
-            //    Console.WriteLine($"{car.Headquarters} {car.Name} : {car.Combined}");
-            //}
-            Console.ReadKey();
+
+
+
         }
 
-        private static List<Manufacturer> ProcessManufacturers(string path)
+        private static void QueryXml()
         {
-            var query =
+            var document = XDocument.Load("fuel.xml");
 
-                File.ReadAllLines(path)
-                    .Skip(1)
-                    .Where(line => line.Length > 1)
-                    .Select(line =>
-                    {
-                        var columns = line.Split(',');
-                        return new Manufacturer
-                        {
-                            Name = columns[0],
-                            Headquarters = columns[1],
-                            Year = int.Parse(columns[2])
-                        };
-                    });
-            return query.ToList();
+
+            var query =
+                //from element in document.Element("Cars").Elements("Car")
+                from element in document.Descendants("Car")
+                where element.Attribute("Manufacturer").Value == "BMW"
+                select element.Attribute("Name").Value;
+
+            foreach(var name in query)
+            {
+                Console.WriteLine(name);
+                
+            }
+            Console.ReadKey();
+
         }
+
+        private static void CreateXml()
+        {
+            var records = ProcessFile("fuel.csv");
+            var document = new XDocument();
+            var cars = new XElement("Cars",
+                from record in records
+                select new XElement("Car",
+                                 new XAttribute("Name", record.Name),
+                                 new XAttribute("Manufacturer", record.Manufacturer),
+                                 new XAttribute("Combined", record.Combined)
+                                    )
+
+            );
+            document.Add(cars);
+            document.Save("fuel.xml");
+            
+        }
+
 
         private static List<Car> ProcessFile(string path)
         {
