@@ -61,14 +61,32 @@ namespace Cars
                     .OrderByDescending(c => c.Combined)
                     .ThenBy(c => c.Name)
                     .Take(10);
-                    //.ToList();
+            //.ToList();
             //.Select( c => new { Name = c.Name.ToUpper(), c.Manufacturer,c.Combined})
             //.ToList();
-            Console.WriteLine(query2.Count());
-            foreach (var car in query2)
+
+            var query3 =
+                   db.Cars
+                   .GroupBy(c => c.Manufacturer)
+                   .Select(g => new
+                   {
+                       Name = g.Key,
+                       Cars = g.OrderByDescending(c => c.Combined).Take(2)
+                   });
+
+            foreach (var group in query3)
             {
-                Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
+                Console.WriteLine(group.Name);
+                foreach(var car in group.Cars)
+                {
+                    Console.WriteLine($"\t{car.Name}: {car.Combined}");
+                }
             }
+            //Console.WriteLine(query2.Count());
+            //foreach (var car in query2)
+            //{
+            //    Console.WriteLine($"{car.Manufacturer} {car.Name} : {car.Combined}");
+            //}
 
         }
 
